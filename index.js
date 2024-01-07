@@ -6,6 +6,11 @@ var userChosenColour = "";
 var userClickedPattern = []; 
 var buttonsEnabled = false
 var gameStartTimer;
+var nextChallengeTimer;
+var score = 0;
+var gameOver = true
+var flashTimer;
+var winningScore = 7;
 
 
 // flash a button function
@@ -15,9 +20,10 @@ function flashButton(colour) {
     //$(target).fadeOut(100).fadeIn(100);
 
     $(target).addClass("pressed");
-    setTimeout(() => {
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () {
         $(target).removeClass("pressed");
-    }, 400);
+    }, 200);
 
     let soundFile = "./sounds/" + colour + ".mp3";
     let challengeSound = new Audio(soundFile);
@@ -50,7 +56,7 @@ function nextChallenge() {
             clearInterval(interval);
         }
         count++
-    }, 750);
+    }, 500); // time between flashes and chellenges
 }
 
 // Event Handler for button clicks 
@@ -88,49 +94,98 @@ $("div[type = 'button']").click(function () {
     if(match === false){
     
         //document.getElementById('level-title').textContent = 'You Lose';
-        $("#level-title").text('You Lose. Press Spacebar to try again');
         // play lose sound
         let soundFile = "./sounds/wrong.mp3";
         let buttonSound = new Audio(soundFile);
         buttonSound.play();
         buttonsEnabled = false;
+        setImage(0);
+        $("#level-title").text('You Lose!!');
+        score=0
+        gamePattern = [];
+        userChosenColour = "";
+        userClickedPattern = [];   
+        gameOver = true
+
 
     }else{
+
         // play colour sound
         let soundFile = "./sounds/" + userChosenColour + ".mp3";
-    
         let buttonSound = new Audio(soundFile);
         buttonSound.play();
     }
+    clearTimeout(nextChallengeTimer)
+    if(userClickedPattern.length === gamePattern.length && gameOver === false) {
+        if(score < winningScore){
+            // increase score
+            score++;
+            setImage(score);
+            $("#level-title").text('Level ' + score);
+            nextChallengeTimer = setTimeout(function () {
+            nextChallenge();
+            }, 500)   
+        } else {
+            setImage(7);
+            $("#level-title").text('You WIN!!');
+            score=0
+            gamePattern = [];
+            userChosenColour = "";
+            userClickedPattern = []; 
+            buttonsEnabled = false;    
+            let soundFile = "./sounds/win.mp3";
+            let winSound = new Audio(soundFile);
+            winSound.play();
+            $('.winston-image').fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+        }
 
-    if(userClickedPattern.length === gamePattern.length){
-        nextChallenge();
     }
 });
 
-// Event Handler for key to start game
-$(document).keypress(function (e) {
-    if(e.key === " "){  // spacebar pressed - start game
-        // Reset the game arrays
-        gamePattern = [];
-        userChosenColour = '';
-        userClickedPattern = [];
+function start() {
+    // Reset the game arrays
+    gamePattern = [];
+    userChosenColour = '';
+    userClickedPattern = [];
+    gameOver = false;
+  
+    // Clear any timeouts
+    clearTimeout(gameStartTimer);
 
-        // Clear any timeouts
-        clearTimeout(gameStartTimer)
-
-        gameStartTimer = setTimeout( function () {
-            // add random colour to game pattern
-            $("#level-title").text('Game Started');
-            var randomChosenColour = buttonColours[nextSequence()];
-            gamePattern.push(randomChosenColour);
-            flashButton(randomChosenColour);
-            buttonsEnabled = true;
-        }, 750)
-
+    setImage(9);
     
+  
+    gameStartTimer = setTimeout(function () {
+      // add random colour to game pattern
+      $("#level-title").text('Game Started');
+      var randomChosenColour = buttonColours[nextSequence()];
+      gamePattern.push(randomChosenColour);
+      flashButton(randomChosenColour);
+      
+      buttonsEnabled = true;
+    }, 250);
+  }
+  
+  // Event Handler for key to start game
+  $(document).keypress(function (e) {
+    if (e.key === " ") { // spacebar pressed - start game
+      start(); // Call the start function
     }
-});
+  });
+  
+  // Event handler to click start button
+  $('.start').click(function () {
+    $('.winston-image').fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+    setTimeout(start, 500); 
+  });
+
+  function setImage(number){
+    let imageName = "./images/winston" + number + ".jpg";
+    // Change the image source using jQuery
+    $('.winston-image').attr('src', imageName);
+
+  }
+  
 
 
 
