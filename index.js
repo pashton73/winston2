@@ -13,10 +13,10 @@ var flashTimer;
 var animatePressTimer;
 var winningScore = 6;
 
-var flashTimerValue = 100;
-var nextTimerValue = 500;
-var startTimerValue = 500;
-var intervalValueTimer = 500;
+var flashTimerValue = 250;
+var nextTimerValue = 750;
+var startTimerValue = 750;
+var intervalValueTimer = 750;
 var gameStartTimerValue = 750;
 
 
@@ -27,14 +27,17 @@ function flashButton(colour) {
     //$(target).fadeOut(100).fadeIn(100);
 
     $(target).addClass("pressed");
+
+    
+    let soundFile = "./sounds/" + colour + ".mp3";
+    let challengeSound = new Audio(soundFile);
+    challengeSound.play();
+    
     clearTimeout(flashTimer);
     flashTimer = setTimeout(function () {
         $(target).removeClass("pressed");
     }, flashTimerValue);
 
-    let soundFile = "./sounds/" + colour + ".mp3";
-    let challengeSound = new Audio(soundFile);
-    challengeSound.play();
 }  
 
 // Get next random number 0-3
@@ -157,13 +160,10 @@ function start() {
     userChosenColour = '';
     userClickedPattern = [];
     gameOver = false;
-  
+    setImage(9);
     // Clear any timeouts
     clearTimeout(gameStartTimer);
 
-    setImage(9);
-    
-  
     gameStartTimer = setTimeout(function () {
       // add random colour to game pattern
       $("#level-title").text('Game Started');
@@ -185,7 +185,7 @@ function start() {
   // Event handler to click start button
   $('.start').click(function () {
     $('.winston-image').fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-    setTimeout(start, startTimerValue); 
+    start(); 
   });
 
   function setImage(number){
