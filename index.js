@@ -10,7 +10,14 @@ var nextChallengeTimer;
 var score = 0;
 var gameOver = true
 var flashTimer;
-var winningScore = 7;
+var animatePressTimer;
+var winningScore = 6;
+
+var flashTimerValue = 100;
+var nextTimerValue = 500;
+var startTimerValue = 500;
+var intervalValueTimer = 500;
+var gameStartTimerValue = 750;
 
 
 // flash a button function
@@ -23,7 +30,7 @@ function flashButton(colour) {
     clearTimeout(flashTimer);
     flashTimer = setTimeout(function () {
         $(target).removeClass("pressed");
-    }, 200);
+    }, flashTimerValue);
 
     let soundFile = "./sounds/" + colour + ".mp3";
     let challengeSound = new Audio(soundFile);
@@ -56,7 +63,7 @@ function nextChallenge() {
             clearInterval(interval);
         }
         count++
-    }, 500); // time between flashes and chellenges
+    }, intervalValueTimer); // time between flashes and chellenges
 }
 
 // Event Handler for button clicks 
@@ -72,13 +79,14 @@ $("div[type = 'button']").click(function () {
     // set colour selected by user
     userChosenColour = $div.attr("id");
  
-    //
-    // Animate the press
-    //
-    $div.addClass("pressed");
-    setTimeout(() => {
-        $div.removeClass("pressed");
-    }, 300);
+    // //
+    // // Animate the press
+    // //
+    // $div.addClass("pressed");
+    // clearTimeout(animatePressTimer);
+    // animatePressTimer = setTimeout(() => {
+    //     $div.removeClass("pressed");
+    // }, 250);
 
     // Set the user's selection
     userClickedPattern.push(userChosenColour);
@@ -122,9 +130,10 @@ $("div[type = 'button']").click(function () {
             score++;
             setImage(score);
             $("#level-title").text('Level ' + score);
+            clearTimeout(nextChallengeTimer);
             nextChallengeTimer = setTimeout(function () {
             nextChallenge();
-            }, 500)   
+            }, nextTimerValue)   
         } else {
             setImage(7);
             $("#level-title").text('You WIN!!');
@@ -163,7 +172,7 @@ function start() {
       flashButton(randomChosenColour);
       
       buttonsEnabled = true;
-    }, 250);
+    }, gameStartTimerValue);
   }
   
   // Event Handler for key to start game
@@ -176,7 +185,7 @@ function start() {
   // Event handler to click start button
   $('.start').click(function () {
     $('.winston-image').fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-    setTimeout(start, 500); 
+    setTimeout(start, startTimerValue); 
   });
 
   function setImage(number){
