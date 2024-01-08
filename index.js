@@ -23,22 +23,26 @@ var gameStartTimerValue = 750;
 // flash a button function
 function flashButton(colour) {
     let target = "#" + colour;
-    //let pressme = "." + colour + "flash";
-    //$(target).fadeOut(100).fadeIn(100);
 
     $(target).addClass("pressed");
 
-    
     let soundFile = "./sounds/" + colour + ".mp3";
     let challengeSound = new Audio(soundFile);
+
+    // When the sound finishes playing, remove the "pressed" class and clear the timer
+    challengeSound.onended = function() {
+        $(target).removeClass("pressed");
+        clearTimeout(flashTimer);
+    };
+
     challengeSound.play();
-    
+
+    // Set the timeout regardless, it will be cleared by onended if sound completes before timeout
     clearTimeout(flashTimer);
     flashTimer = setTimeout(function () {
         $(target).removeClass("pressed");
     }, flashTimerValue);
-
-}  
+} 
 
 // Get next random number 0-3
 function nextSequence(){
@@ -122,9 +126,10 @@ $("div[type = 'button']").click(function () {
     }else{
 
         // play colour sound
-        let soundFile = "./sounds/" + userChosenColour + ".mp3";
-        let buttonSound = new Audio(soundFile);
-        buttonSound.play();
+        //let soundFile = "./sounds/" + userChosenColour + ".mp3";
+        //let buttonSound = new Audio(soundFile);
+        //buttonSound.play();
+        flashButton(userChosenColour);
     }
     clearTimeout(nextChallengeTimer)
     if(userClickedPattern.length === gamePattern.length && gameOver === false) {
