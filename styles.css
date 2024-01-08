@@ -68,28 +68,9 @@ body {
 
 .pressed {
   opacity: 1;
-  animation: fadeInOut 1.5s 3; 
-}
-
-.start {
-  width: 300px; /* Set the width and height of the circle */
-  height: 300px;
-  border-radius: 50%; /* Makes the div circular */
-  background-color: #FFD700; /* Yellow color, change as needed */
-  position: absolute; /* Position the div absolutely within its container */
-  z-index: 1; /* Ensure the div appears on top of other elements */
-  pointer-events: auto; /* Allow the div to capture pointer events */
-  /*transform: translate(-120%, -85%);*/
-  opacity: 1
 }
 
 
-.start img {
-  width: 100%; /* Ensures the image fills the entire div width */
-  height: 100%; /* Ensures the image fills the entire div height */
-  object-fit: cover; /* Maintains aspect ratio and covers the entire div */
-  border-radius: 50%; /* Rounds the corners to make it circular */
-}
 
 .game-container {
   position: relative; /* Set the parent container as relative */

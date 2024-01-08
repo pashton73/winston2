@@ -13,11 +13,17 @@ var flashTimer;
 var animatePressTimer;
 var winningScore = 6;
 
-var flashTimerValue = 250;
+var flashTimerValue = 200;
 var nextTimerValue = 750;
 var startTimerValue = 750;
-var intervalValueTimer = 750;
+var intervalValueTimer = 1000; // machine showing pattern to copy
 var gameStartTimerValue = 750;
+
+// clearTimeout(flashTimer);
+// clearTimeout(nextTimerValue);
+// clearTimeout(startTimerValue);
+// clearTimeout(intervalValueTimer);
+// clearTimeout(gameStartTimerValue);
 
 
 // flash a button function
@@ -62,7 +68,8 @@ function nextChallenge() {
         randomChosenColour = buttonColours[nextSequence()];
         gamePattern.push(randomChosenColour); 
     }
-    // Call flashButton 250 ms appart to show new challenge
+    
+
     let count = 0;
     let interval = setInterval(function (){
         flashButton(gamePattern[count]);
@@ -71,6 +78,7 @@ function nextChallenge() {
         }
         count++
     }, intervalValueTimer); // time between flashes and chellenges
+    
 }
 
 // Event Handler for button clicks 
@@ -86,15 +94,6 @@ $("div[type = 'button']").click(function () {
     // set colour selected by user
     userChosenColour = $div.attr("id");
  
-    // //
-    // // Animate the press
-    // //
-    // $div.addClass("pressed");
-    // clearTimeout(animatePressTimer);
-    // animatePressTimer = setTimeout(() => {
-    //     $div.removeClass("pressed");
-    // }, 250);
-
     // Set the user's selection
     userClickedPattern.push(userChosenColour);
 
@@ -124,11 +123,7 @@ $("div[type = 'button']").click(function () {
 
 
     }else{
-
-        // play colour sound
-        //let soundFile = "./sounds/" + userChosenColour + ".mp3";
-        //let buttonSound = new Audio(soundFile);
-        //buttonSound.play();
+        // correct choice
         flashButton(userChosenColour);
     }
     clearTimeout(nextChallengeTimer)
@@ -140,8 +135,16 @@ $("div[type = 'button']").click(function () {
             $("#level-title").text('Level ' + score);
             clearTimeout(nextChallengeTimer);
             nextChallengeTimer = setTimeout(function () {
-            nextChallenge();
-            }, nextTimerValue)   
+                nextChallenge();
+            }, nextTimerValue)  
+            
+            // Clear all timers
+            clearTimeout(flashTimer);
+            clearTimeout(nextTimerValue);
+            clearTimeout(startTimerValue);
+            clearTimeout(intervalValueTimer);
+            clearTimeout(gameStartTimerValue);
+
         } else {
             setImage(7);
             $("#level-title").text('You WIN!!');
@@ -177,15 +180,10 @@ function start() {
       flashButton(randomChosenColour);
       
       buttonsEnabled = true;
+      clearTimeout(gameStartTimer);
     }, gameStartTimerValue);
   }
   
-  // Event Handler for key to start game
-  $(document).keypress(function (e) {
-    if (e.key === " ") { // spacebar pressed - start game
-      start(); // Call the start function
-    }
-  });
   
   // Event handler to click start button
   $('.start').click(function () {
@@ -193,12 +191,17 @@ function start() {
     start(); 
   });
 
-  function setImage(number){
+  function setImage(number) {
     let imageName = "./images/winston" + number + ".jpg";
-    // Change the image source using jQuery
-    $('.winston-image').attr('src', imageName);
-
-  }
+    // Fade out the image
+    $('.winston-image').fadeOut(300, function() {
+        // Change the image source once the fade-out is complete
+        $(this).attr('src', imageName).on('load', function() {
+            // Fade in the new image after it has been loaded
+            $(this).fadeIn(300);
+        });
+    });
+}
   
 
 
